@@ -67,6 +67,7 @@ import './spice-mode';
 import './spirv-mode';
 import './sway-mode';
 import './tablegen-mode';
+import './tbasic-mode';
 import './v-mode';
 import './vala-mode';
 import './wat-mode';

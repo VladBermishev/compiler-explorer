@@ -146,6 +146,7 @@ export {SwayCompiler} from './sway.js';
 export {SwiftCompiler} from './swift.js';
 export {TIC2000} from './tic2000.js';
 export {TableGenCompiler} from './tablegen.js';
+export {TBasicCompiler} from './tbasic.js';
 export {TenDRACompiler} from './tendra.js';
 export {TinyCCompiler} from './tinyc.js';
 export {ToitCompiler} from './toit.js';

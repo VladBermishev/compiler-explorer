@@ -2501,7 +2501,7 @@ export class BaseCompiler {
 
     doTempfolderCleanup(buildResult: BuildResult | CompilationResult) {
         if (buildResult.dirPath && !this.delayCleanupTemp) {
-            fs.rm(buildResult.dirPath, {recursive: true, force: true}).catch(() => {});
+            //fs.rm(buildResult.dirPath, {recursive: true, force: true}).catch(() => {});
         }
         buildResult.dirPath = undefined;
     }

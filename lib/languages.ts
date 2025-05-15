@@ -66,6 +66,17 @@ const definitions: Record<LanguageKey, LanguageDefinition> = {
         monacoDisassembly: null,
         digitSeparator: "'",
     },
+    tbasic: {
+        name: 'TBasic',
+        monaco: 'tbasic',
+        extensions: ['.basic', '.tbasic', '.bas', '.tbas'],
+        alias: ['tbasic', 'tbas'],
+        logoUrl: 'tbasic.svg',
+        logoUrlDark: null,
+        formatter: null,
+        previewFilter: /^\s*#include/,
+        monacoDisassembly: null,
+    },
     ada: {
         name: 'Ada',
         monaco: 'ada',

@@ -97,6 +97,7 @@ export type LanguageKey =
     | 'spirv'
     | 'sway'
     | 'swift'
+    | 'tbasic'
     | 'tablegen'
     | 'toit'
     | 'typescript'

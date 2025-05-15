@@ -1,0 +1,10 @@
+Function Join$(sep$, items$())
+    If Len%(items$) >= 1 Then
+        Join$ = items$(1)
+    Else
+        Join$ = ""
+    End If
+    For i% = 2 To Len%(items$)
+        Join$ = Join$ + sep$ + items$(i%)
+    Next i%
+End Function
