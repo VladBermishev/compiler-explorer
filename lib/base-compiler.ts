@@ -1430,6 +1430,33 @@ export class BaseCompiler {
         };
     }
 
+    async generateHir(inputFilename: string, options: string[], produceCfg: boolean) {
+        const newOptions = options.filter(option => option !== '-fcolor-diagnostics').concat(['--emit-hir']);
+        const execOptions = this.getDefaultExecOptions();
+        execOptions.maxOutput = 1024 * 1024 * 1024;
+        const content = await this.runCompiler(
+            this.compiler.exe,
+            newOptions,
+            this.filename(inputFilename),
+            execOptions,
+        );
+        const result: {
+            asm: ResultLine[];
+            cfg?: Record<string, cfg.CFG>;
+        } = {
+            asm: content.stdout,
+        };
+        if (produceCfg) {
+            result.cfg = cfg.generateStructure(
+                this.compiler,
+                content.stdout.map(line => ({text: line.text})),
+                true,
+            );
+        }
+
+        return result;
+    }
+
     getClangirOutputFilename(inputFilename: string) {
         return utils.changeExtension(inputFilename, '.cir');
     }
@@ -2370,6 +2397,7 @@ export class BaseCompiler {
         const makeGnatDebug = backendOptions.produceGnatDebug && this.compiler.supportsGnatDebugViews;
         const makeGnatDebugTree = backendOptions.produceGnatDebugTree && this.compiler.supportsGnatDebugViews;
         const makeIr = backendOptions.produceIr && this.compiler.supportsIrView;
+        const makeHir = backendOptions.produceHir && this.compiler.supportsHirView;
         const makeClangir = backendOptions.produceClangir && this.compiler.supportsClangirView;
         const makeOptPipeline = backendOptions.produceOptPipeline && this.compiler.optPipeline;
         const makeRustMir = backendOptions.produceRustMir && this.compiler.supportsRustMirView;
@@ -2385,6 +2413,7 @@ export class BaseCompiler {
             astResult,
             ppResult,
             irResult,
+            hirResult,
             clangirResult,
             optPipelineResult,
             rustHirResult,
@@ -2403,6 +2432,7 @@ export class BaseCompiler {
                       filters,
                   )
                 : undefined,
+            makeHir ? this.generateHir(inputFilename, options, backendOptions.produceCfg?.asm) : undefined,
             makeClangir ? this.generateClangir(inputFilename, options, backendOptions.produceClangir) : undefined,
             makeOptPipeline
                 ? this.generateOptPipeline(inputFilename, options, filters, backendOptions.produceOptPipeline)
@@ -2481,6 +2511,8 @@ export class BaseCompiler {
         asmResult.ppOutput = ppResult;
 
         asmResult.irOutput = irResult;
+        asmResult.hirOutput = hirResult;
+
         asmResult.clangirOutput = clangirResult;
         asmResult.optPipelineOutput = optPipelineResult;
 

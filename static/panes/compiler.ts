@@ -180,6 +180,7 @@ export class Compiler extends MonacoPane<monaco.editor.IStandaloneCodeEditor, Co
     private ppButton: JQuery<HTMLButtonElement>;
     private astButton: JQuery<HTMLButtonElement>;
     private irButton: JQuery<HTMLButtonElement>;
+    private hirButton: JQuery<HTMLButtonElement>;
     private clangirButton: JQuery<HTMLButtonElement>;
     private optPipelineButton: JQuery<HTMLButtonElement>;
     private deviceButton: JQuery<HTMLButtonElement>;
@@ -250,6 +251,7 @@ export class Compiler extends MonacoPane<monaco.editor.IStandaloneCodeEditor, Co
     private ppViewOpen: boolean;
     private astViewOpen: boolean;
     private irViewOpen: boolean;
+    private hirViewOpen: boolean;
     private clangirViewOpen: boolean;
     private optPipelineViewOpenCount: number;
     private gccDumpViewOpen: boolean;
@@ -509,6 +511,17 @@ export class Compiler extends MonacoPane<monaco.editor.IStandaloneCodeEditor, Co
                 this.id,
                 this.source,
                 this.lastResult?.irOutput,
+                this.getCompilerName(),
+                this.sourceEditorId ?? 0,
+                this.sourceTreeId ?? 0,
+            );
+        };
+
+        const createHirView = () => {
+            return Components.getHirViewWith(
+                this.id,
+                this.source,
+                this.lastResult?.hirOutput,
                 this.getCompilerName(),
                 this.sourceEditorId ?? 0,
                 this.sourceTreeId ?? 0,
@@ -779,6 +792,19 @@ export class Compiler extends MonacoPane<monaco.editor.IStandaloneCodeEditor, Co
                 this.hub.findParentRowOrColumn(this.container.parent) ||
                 this.container.layoutManager.root.contentItems[0];
             insertPoint.addChild(createIrView());
+        });
+
+        this.container.layoutManager
+            .createDragSource(this.hirButton, createHirView as any)
+
+            // @ts-ignore
+            ._dragListener.on('dragStart', hidePaneAdder);
+
+        this.hirButton.on('click', () => {
+            const insertPoint =
+                this.hub.findParentRowOrColumn(this.container.parent) ||
+                this.container.layoutManager.root.contentItems[0];
+            insertPoint.addChild(createHirView());
         });
 
         this.container.layoutManager
@@ -1273,6 +1299,7 @@ export class Compiler extends MonacoPane<monaco.editor.IStandaloneCodeEditor, Co
                 produceGnatDebugTree: this.gnatDebugTreeViewOpen,
                 produceGnatDebug: this.gnatDebugViewOpen,
                 produceIr: this.irViewOpen ? this.llvmIrOptions : null,
+                produceHir: this.hirViewOpen,
                 produceClangir: this.clangirViewOpen ? this.clangirOptions : null,
                 produceOptPipeline: this.optPipelineViewOpenCount > 0 ? this.optPipelineOptions : null,
                 produceDevice: this.deviceViewOpen,
@@ -2175,6 +2202,23 @@ export class Compiler extends MonacoPane<monaco.editor.IStandaloneCodeEditor, Co
         }
     }
 
+    onHirViewOpened(id: number): void {
+        if (this.id === id) {
+            this.hirButton.prop('disabled', true);
+            this.hirViewOpen = true;
+            this.updateDebugCallsFilter();
+            this.compile();
+        }
+    }
+
+    onHirViewClosed(id: number): void {
+        if (this.id === id) {
+            this.hirButton.prop('disabled', false);
+            this.hirViewOpen = false;
+            this.updateDebugCallsFilter();
+        }
+    }
+
     onClangirViewOpened(id: number): void {
         if (this.id === id) {
             this.clangirButton.prop('disabled', true);
@@ -2530,6 +2574,7 @@ export class Compiler extends MonacoPane<monaco.editor.IStandaloneCodeEditor, Co
         this.ppButton = this.domRoot.find('.btn.view-pp');
         this.astButton = this.domRoot.find('.btn.view-ast');
         this.irButton = this.domRoot.find('.btn.view-ir');
+        this.hirButton = this.domRoot.find('.btn.view-hir');
         this.clangirButton = this.domRoot.find('.btn.view-clangir');
         this.optPipelineButton = this.domRoot.find('.btn.view-opt-pipeline');
         this.deviceButton = this.domRoot.find('.btn.view-device');
@@ -2814,6 +2859,7 @@ export class Compiler extends MonacoPane<monaco.editor.IStandaloneCodeEditor, Co
         this.ppButton.prop('disabled', this.ppViewOpen);
         this.astButton.prop('disabled', this.astViewOpen);
         this.irButton.prop('disabled', this.irViewOpen);
+        this.hirButton.prop('disabled', this.hirViewOpen);
         this.clangirButton.prop('disabled', this.clangirViewOpen);
         // As per #4112, it's useful to have this available more than once: Don't disable it when it opens
         // this.optPipelineButton.prop('disabled', this.optPipelineViewOpen);
@@ -2835,6 +2881,7 @@ export class Compiler extends MonacoPane<monaco.editor.IStandaloneCodeEditor, Co
         this.ppButton.toggle(!!this.compiler.supportsPpView);
         this.astButton.toggle(!!this.compiler.supportsAstView);
         this.irButton.toggle(!!this.compiler.supportsIrView);
+        this.hirButton.toggle(!!this.compiler.supportsHirView);
         this.clangirButton.toggle(!!this.compiler.supportsClangirView);
         this.optPipelineButton.toggle(!!this.compiler.optPipeline);
         this.deviceButton.toggle(!!this.compiler.supportsDeviceAsmView);
@@ -2999,6 +3046,8 @@ export class Compiler extends MonacoPane<monaco.editor.IStandaloneCodeEditor, Co
         this.eventHub.on('astViewClosed', this.onAstViewClosed, this);
         this.eventHub.on('irViewOpened', this.onIrViewOpened, this);
         this.eventHub.on('irViewClosed', this.onIrViewClosed, this);
+        this.eventHub.on('hirViewOpened', this.onHirViewOpened, this);
+        this.eventHub.on('hirViewClosed', this.onHirViewClosed, this);
         this.eventHub.on('clangirViewOpened', this.onClangirViewOpened, this);
         this.eventHub.on('clangirViewClosed', this.onClangirViewClosed, this);
         this.eventHub.on('llvmIrViewOptionsUpdated', this.onLLVMIrViewOptionsUpdated, this);

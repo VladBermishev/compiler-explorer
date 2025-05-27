@@ -107,6 +107,7 @@ export type CompilationRequestOptions = {
         produceGnatDebugTree?: boolean;
         produceGnatDebug?: boolean;
         produceIr?: LLVMIrBackendOptions | null;
+        produceHir?: boolean;
         produceClangir?: ClangirBackendOptions | null;
         produceOptPipeline?: OptPipelineBackendOptions | null;
         produceDevice?: boolean;
@@ -199,6 +200,12 @@ export type CompilationResult = {
         asm: ParsedAsmResultLine[];
         cfg?: CFGResult;
     };
+
+    hirOutput?: {
+        asm: ResultLine[];
+        cfg?: CFGResult;
+    };
+
     clangirOutput?: ResultLine[];
 
     optPipelineOutput?: OptPipelineOutput;

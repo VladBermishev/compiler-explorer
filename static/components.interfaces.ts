@@ -49,6 +49,7 @@ export const GCC_DUMP_VIEW_COMPONENT_NAME = 'gccdump';
 export const CFG_VIEW_COMPONENT_NAME = 'cfg';
 export const CONFORMANCE_VIEW_COMPONENT_NAME = 'conformance';
 export const IR_VIEW_COMPONENT_NAME = 'ir';
+export const HIR_VIEW_COMPONENT_NAME = 'hir';
 export const CLANGIR_VIEW_COMPONENT_NAME = 'clangir';
 export const OPT_PIPELINE_VIEW_COMPONENT_NAME = 'optPipelineView';
 // Historical LLVM-specific name preserved to keep old links working

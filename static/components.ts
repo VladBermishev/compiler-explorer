@@ -71,6 +71,7 @@ import {
     HASKELL_CMM_VIEW_COMPONENT_NAME,
     HASKELL_CORE_VIEW_COMPONENT_NAME,
     HASKELL_STG_VIEW_COMPONENT_NAME,
+    HIR_VIEW_COMPONENT_NAME,
     IR_VIEW_COMPONENT_NAME,
     OPT_PIPELINE_VIEW_COMPONENT_NAME,
     OPT_VIEW_COMPONENT_NAME,
@@ -618,6 +619,36 @@ export function getIrViewWith(
     return {
         type: 'component',
         componentName: IR_VIEW_COMPONENT_NAME,
+        componentState: {
+            id,
+            source,
+            irOutput,
+            compilerName,
+            editorid,
+            treeid,
+        },
+    };
+}
+
+export function getHirView(): ComponentConfig<EmptyIrViewState> {
+    return {
+        type: 'component',
+        componentName: HIR_VIEW_COMPONENT_NAME,
+        componentState: {},
+    };
+}
+
+export function getHirViewWith(
+    id: number,
+    source: string,
+    irOutput: unknown,
+    compilerName: string,
+    editorid: number,
+    treeid: number,
+): ComponentConfig<PopulatedIrViewState> {
+    return {
+        type: 'component',
+        componentName: HIR_VIEW_COMPONENT_NAME,
         componentState: {
             id,
             source,

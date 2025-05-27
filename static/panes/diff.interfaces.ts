@@ -34,9 +34,10 @@ export enum DiffType {
     DeviceView = 7,
     AstOutput = 8,
     IrOutput = 9,
-    RustMirOutput = 10,
-    RustMacroExpOutput = 11,
-    RustHirOutput = 12,
+    HirOutput = 10,
+    RustMirOutput = 11,
+    RustMacroExpOutput = 12,
+    RustHirOutput = 13,
 }
 
 export type DiffState = {

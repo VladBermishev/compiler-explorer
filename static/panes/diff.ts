@@ -453,6 +453,9 @@ export class Diff extends MonacoPane<monaco.editor.IStandaloneDiffEditor, DiffSt
             if (compiler.supportsIrView) {
                 options.push({id: DiffType.IrOutput.toString(), name: 'LLVM IR'});
             }
+            if (compiler.supportsHirView) {
+                options.push({id: DiffType.HirOutput.toString(), name: 'HIR'});
+            }
             if (compiler.supportsRustMirView) {
                 options.push({id: DiffType.RustMirOutput.toString(), name: 'Rust MIR'});
             }

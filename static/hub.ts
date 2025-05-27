@@ -44,6 +44,7 @@ import {
     HASKELL_CMM_VIEW_COMPONENT_NAME,
     HASKELL_CORE_VIEW_COMPONENT_NAME,
     HASKELL_STG_VIEW_COMPONENT_NAME,
+    HIR_VIEW_COMPONENT_NAME,
     IR_VIEW_COMPONENT_NAME,
     LLVM_OPT_PIPELINE_VIEW_COMPONENT_NAME,
     OPT_PIPELINE_VIEW_COMPONENT_NAME,
@@ -78,6 +79,7 @@ import {GnatDebugTree as GnatDebugTreeView} from './panes/gnatdebugtree-view.js'
 import {HaskellCmm as HaskellCmmView} from './panes/haskellcmm-view.js';
 import {HaskellCore as HaskellCoreView} from './panes/haskellcore-view.js';
 import {HaskellStg as HaskellStgView} from './panes/haskellstg-view.js';
+import {Hir as HirView} from './panes/hir-view.js';
 import {Ir as IrView} from './panes/ir-view.js';
 import {OptPipeline} from './panes/opt-pipeline.js';
 import {Opt as OptView} from './panes/opt-view.js';
@@ -138,6 +140,7 @@ export class Hub {
         layout.registerComponent(PP_VIEW_COMPONENT_NAME, (c: GLC, s: any) => this.ppViewFactory(c, s));
         layout.registerComponent(AST_VIEW_COMPONENT_NAME, (c: GLC, s: any) => this.astViewFactory(c, s));
         layout.registerComponent(IR_VIEW_COMPONENT_NAME, (c: GLC, s: any) => this.irViewFactory(c, s));
+        layout.registerComponent(HIR_VIEW_COMPONENT_NAME, (c: GLC, s: any) => this.hirViewFactory(c, s));
         layout.registerComponent(CLANGIR_VIEW_COMPONENT_NAME, (c: GLC, s: any) => this.clangirViewFactory(c, s));
         layout.registerComponent(OPT_PIPELINE_VIEW_COMPONENT_NAME, (c: GLC, s: any) => this.optPipelineFactory(c, s));
         // Historical LLVM-specific name preserved to keep old links working
@@ -505,6 +508,10 @@ export class Hub {
 
     public irViewFactory(container: GoldenLayout.Container, state: ConstructorParameters<typeof IrView>[2]): IrView {
         return new IrView(this, container, state);
+    }
+
+    public hirViewFactory(container: GoldenLayout.Container, state: ConstructorParameters<typeof HirView>[2]): HirView {
+        return new HirView(this, container, state);
     }
 
     public clangirViewFactory(

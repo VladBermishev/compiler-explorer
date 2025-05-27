@@ -319,7 +319,11 @@ export class Cfg extends Pane<CfgState> {
         if (this.compilerInfo.compilerId !== compilerId) return;
         this.functionSelector.clear(true);
         this.functionSelector.clearOptions();
-        const cfg = this.state.isircfg ? result.irOutput?.cfg : result.cfg;
+        const cfg = this.state.isircfg
+            ? result.irOutput?.cfg
+            : result.hirOutput == undefined
+              ? result.cfg
+              : result.hirOutput.cfg;
         if (cfg) {
             this.results = cfg;
             this.contentsAreIr = !!this.state.isircfg || !!result.compilationOptions?.includes('-emit-llvm');

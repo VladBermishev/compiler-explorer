@@ -15,6 +15,7 @@ export class TBasicCompiler extends BaseCompiler {
     constructor(compilerInfo: PreliminaryCompilerInfo & {disabledFilters?: string[]}, env: CompilationEnvironment) {
         super(compilerInfo, env);
         this.tbasicAst = new TBasicAstParser(this.compilerProps);
+        this.compiler.supportsHirView = true;
     }
 
     override optionsForFilter(filters: ParseFiltersAndOutputOptions, outputFilename: string, userOptions?: string[]) {
