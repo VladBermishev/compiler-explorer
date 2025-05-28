@@ -1,3 +1,6 @@
+import {ParsedAsmResultLine} from '../../types/asmresult/asmresult.interfaces.js';
+import {CompilationResult} from '../../types/compilation/compilation.interfaces.js';
+import {LLVMIrBackendOptions} from '../../types/compilation/ir.interfaces.js';
 import type {PreliminaryCompilerInfo} from '../../types/compiler.interfaces.js';
 import type {ParseFiltersAndOutputOptions} from '../../types/features/filters.interfaces.js';
 import type {ResultLine} from '../../types/resultline/resultline.interfaces.js';
@@ -15,6 +18,8 @@ export class TBasicCompiler extends BaseCompiler {
     constructor(compilerInfo: PreliminaryCompilerInfo & {disabledFilters?: string[]}, env: CompilationEnvironment) {
         super(compilerInfo, env);
         this.tbasicAst = new TBasicAstParser(this.compilerProps);
+        this.compiler.supportsIrView = true;
+        this.compiler.irArg = ['--emit-llvm'];
         this.compiler.supportsHirView = true;
     }
 
@@ -36,5 +41,15 @@ export class TBasicCompiler extends BaseCompiler {
 
     override couldSupportASTDump(version: string) {
         return true;
+    }
+    override async processIrOutput(
+        output: CompilationResult,
+        irOptions: LLVMIrBackendOptions,
+        filters: ParseFiltersAndOutputOptions,
+    ): Promise<{
+        asm: ParsedAsmResultLine[];
+        languageId: string;
+    }> {
+        return await this.llvmIr.process(output.stdout.map(l => l.text).join('\n'), irOptions);
     }
 }
