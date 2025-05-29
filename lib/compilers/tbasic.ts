@@ -3,6 +3,7 @@ import {CompilationResult} from '../../types/compilation/compilation.interfaces.
 import {LLVMIrBackendOptions} from '../../types/compilation/ir.interfaces.js';
 import type {PreliminaryCompilerInfo} from '../../types/compiler.interfaces.js';
 import type {ParseFiltersAndOutputOptions} from '../../types/features/filters.interfaces.js';
+import type {SelectedLibraryVersion} from '../../types/libraries/libraries.interfaces.js';
 import type {ResultLine} from '../../types/resultline/resultline.interfaces.js';
 import {BaseCompiler} from '../base-compiler.js';
 import {CompilationEnvironment} from '../compilation-env.js';
@@ -17,14 +18,26 @@ export class TBasicCompiler extends BaseCompiler {
 
     constructor(compilerInfo: PreliminaryCompilerInfo & {disabledFilters?: string[]}, env: CompilationEnvironment) {
         super(compilerInfo, env);
+        this.outputFilebase = this.compileFilename.split('.')[0];
         this.tbasicAst = new TBasicAstParser(this.compilerProps);
         this.compiler.supportsIrView = true;
         this.compiler.irArg = ['--emit-llvm'];
         this.compiler.supportsHirView = true;
     }
-
+    override getLibLinkInfo(
+        filters: ParseFiltersAndOutputOptions,
+        libraries: SelectedLibraryVersion[],
+        toolchainPath: string,
+        dirPath: string,
+    ) {
+        const libLinks: string[] = [];
+        const libPathsAsFlags: string[] = [];
+        const staticLibLinks: string[] = [];
+        return {libLinks, libPathsAsFlags, staticLibLinks};
+    }
     override optionsForFilter(filters: ParseFiltersAndOutputOptions, outputFilename: string, userOptions?: string[]) {
-        return [];
+        if (filters.execute === true) return ['--output', this.filename(outputFilename)];
+        return ['--emit-intel-asm', '--output', this.filename(outputFilename)];
     }
 
     override async generateAST(inputFilename: string, options: string[]): Promise<ResultLine[]> {
